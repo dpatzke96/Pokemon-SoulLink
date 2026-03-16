@@ -1,112 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SoulLink Tracker PRO</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<title>SoulLink Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-body{
-font-family:Inter, Arial;
-background:#0f172a;
-color:white;
-margin:0;
-padding:20px
-}
-
-.container{
-max-width:1200px;
-margin:auto
-}
-
-h1{
-text-align:center
-}
-
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:14px;
-margin-bottom:20px
-}
-
-input,select,button{
-padding:10px;
-margin:6px;
-border-radius:8px;
-border:none;
-font-size:14px
-}
-
-button{
-background:#22c55e;
-color:white;
-font-weight:600;
-cursor:pointer
-}
-
-button.danger{
-background:#ef4444
-}
-
-table{
-width:100%;
-border-collapse:collapse
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #334155
-}
-
-.dead{
-opacity:0.4;
-text-decoration:line-through
-}
-
-.sprite{
-width:42px;
-height:42px
-}
-
-.team{
-display:grid;
-grid-template-columns:repeat(6,1fr);
-gap:10px
-}
-
-.team-slot{
-background:#020617;
-padding:10px;
-border-radius:10px;
-text-align:center
-}
-
-.team-slot img{
-width:70px
-}
-
-.search-results{
-background:#020617;
-border-radius:8px;
-max-height:150px;
-overflow:auto;
-position:absolute;
-z-index:10;
-width:200px
-}
-
-.search-item{
-padding:6px;
-cursor:pointer
-}
-
-.search-item:hover{
-background:#1e293b
-}
+body{font-family:Inter,Arial;background:linear-gradient(180deg,#0b1020,#050814);color:white;margin:0;padding:20px}
+h1{font-family:Orbitron;text-align:center;letter-spacing:2px}
+.container{max-width:1400px;margin:auto}
+.card{background:#0f172a;border:1px solid #1f2a44;padding:20px;border-radius:14px;margin-bottom:25px}
+input,select,button{padding:10px;margin:6px;border-radius:8px;border:none;font-size:14px}
+button{background:#22c55e;color:white;font-weight:600;cursor:pointer}
+button.danger{background:#ef4444}
+.players{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:40px}
+.player-box{background:#020617;padding:20px;border-radius:14px;border:2px solid #1e293b}
+.player1{border-color:#ef4444}
+.player2{border-color:#3b82f6}
+.player-title{font-family:Orbitron;margin-bottom:15px}
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.pokemon-card{background:#020617;border-radius:12px;padding:10px;text-align:center;border:1px solid #1f2a44;transition:transform .15s}
+.pokemon-card:hover{transform:scale(1.05)}
+.pokemon-card img{width:80px}
+.dead{opacity:0.35;filter:grayscale(100%)}
+.routes{display:grid;gap:20px}
+.route-box{background:#020617;padding:15px;border-radius:12px;border:1px solid #1e293b}
+.route-title{font-family:Orbitron;margin-bottom:10px}
+.link{display:flex;align-items:center;justify-content:center;gap:20px}
+.link img{width:60px}
+.arrow{font-size:28px;opacity:.7}
+.search-results{background:#020617;border-radius:8px;max-height:150px;overflow:auto;position:absolute;z-index:10;width:240px}
+.search-item{padding:6px;cursor:pointer}
+.search-item:hover{background:#1e293b}
 </style>
 </head>
 
@@ -114,10 +40,10 @@ background:#1e293b
 
 <div class="container">
 
-<h1>🔥 SoulLink Tracker PRO</h1>
+<h1>🔥 SOULLINK TRACKER</h1>
 
 <div class="card">
-<h3>Spieler Namen</h3>
+<h3>Spieler</h3>
 <input id="player1" placeholder="Spieler 1">
 <input id="player2" placeholder="Spieler 2">
 </div>
@@ -128,7 +54,7 @@ background:#1e293b
 <input id="route" placeholder="Route">
 
 <div style="position:relative;display:inline-block;">
-<input id="pokemonSearch" placeholder="Pokémon suchen">
+<input id="pokemonSearch" placeholder="Pokémon suchen (Deutsch oder Englisch)">
 <div id="results" class="search-results"></div>
 </div>
 
@@ -143,35 +69,23 @@ background:#1e293b
 
 </div>
 
-<div class="card">
-<h3>Team Übersicht</h3>
+<div class="players">
 
-<h4>Spieler 1</h4>
+<div class="player-box player1">
+<div class="player-title">Spieler 1 Team</div>
 <div class="team" id="team1"></div>
+</div>
 
-<h4>Spieler 2</h4>
+<div class="player-box player2">
+<div class="player-title">Spieler 2 Team</div>
 <div class="team" id="team2"></div>
+</div>
 
 </div>
 
 <div class="card">
-<h3>Alle Pokémon</h3>
-
-<table>
-<thead>
-<tr>
-<th>Route</th>
-<th>Sprite</th>
-<th>Pokémon</th>
-<th>Spieler</th>
-<th>Level</th>
-<th>Status</th>
-<th>Aktion</th>
-</tr>
-</thead>
-<tbody id="table"></tbody>
-</table>
-
+<h3>SoulLink Verbindungen</h3>
+<div id="routes" class="routes"></div>
 </div>
 
 </div>
@@ -181,78 +95,124 @@ background:#1e293b
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "YOUR_KEY",
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-projectId: "YOUR_PROJECT",
-storageBucket: "YOUR_PROJECT.appspot.com",
-messagingSenderId: "123",
-appId: "123"
+const firebaseConfig={
+	apiKey: "AIzaSyC1p7jvMAHOS3BR7vDAbbG-T5XTawBmkfU",
+    authDomain: "pokemon-soullink-12aef.firebaseapp.com",
+    projectId: "pokemon-soullink-12aef",
+    storageBucket: "pokemon-soullink-12aef.firebasestorage.app",
+    messagingSenderId: "817163238962",
+    appId: "1:817163238962:web:c49f38c66ef3f71ffe462b",
+    measurementId: "G-5Q2JLQ19W2"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const pokemonRef = collection(db,"pokemon");
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const pokemonRef=collection(db,"pokemon");
 
 function sprite(name){
 return `https://img.pokemondb.net/sprites/home/normal/${name}.png`;
 }
 
+// --- EN -> DE Übersetzung ---
+const germanCache={};
+
+async function getGermanName(name){
+
+if(germanCache[name]) return germanCache[name];
+
+try{
+const res=await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`);
+const data=await res.json();
+
+const german=data.names.find(n=>n.language.name==="de");
+
+if(german){
+ germanCache[name]=german.name;
+ return german.name;
+}
+
+}catch(e){}
+
+return name;
+}
+
 async function addPokemon(){
 
 const route=document.getElementById("route").value;
-const pokemon=document.getElementById("pokemonSearch").value.toLowerCase();
+const search=document.getElementById("pokemonSearch");
+
+let pokemon=search.dataset.value;
+
+if(!pokemon){
+pokemon=search.value.toLowerCase();
+}
+
 const player=document.getElementById("player").value;
 const level=document.getElementById("level").value;
 
-if(!pokemon) return;
+if(!pokemon)return;
 
 await addDoc(pokemonRef,{route,pokemon,player,level,status:"alive"});
 
-document.getElementById("pokemonSearch").value="";
+search.value="";
+search.dataset.value="";
+
 }
 
-function render(data){
+async function render(data){
 
-const table=document.getElementById("table");
 const team1=document.getElementById("team1");
 const team2=document.getElementById("team2");
+const routesDiv=document.getElementById("routes");
 
 team1.innerHTML="";
 team2.innerHTML="";
-table.innerHTML="";
+routesDiv.innerHTML="";
 
-data.forEach(p=>{
+const routes={};
 
-const tr=document.createElement("tr");
+for(const p of data){
 
-if(p.status==="dead") tr.classList.add("dead");
+const german=await getGermanName(p.pokemon);
 
-tr.innerHTML=`
-<td>${p.route}</td>
-<td><img class="sprite" src="${sprite(p.pokemon)}"></td>
-<td>${p.pokemon}</td>
-<td>${p.player}</td>
-<td>${p.level}</td>
-<td>${p.status}</td>
-<td><button onclick="kill('${p.id}','${p.route}')" class="danger">Tot</button></td>
+if(!routes[p.route])routes[p.route]=[];
+routes[p.route].push({...p,german});
+
+const card=document.createElement("div");
+card.className="pokemon-card"+(p.status==="dead"?" dead":"");
+
+card.innerHTML=`
+<img src="${sprite(p.pokemon)}">
+<div>${german}</div>
+<button onclick="kill('${p.id}','${p.route}')" class="danger">💀</button>
 `;
 
-table.appendChild(tr);
-
-if(p.status==="alive"){
-
-const slot=document.createElement("div");
-slot.className="team-slot";
-slot.innerHTML=`<img src="${sprite(p.pokemon)}"><br>${p.pokemon}`;
-
-if(p.player=="1" && team1.children.length<6) team1.appendChild(slot);
-if(p.player=="2" && team2.children.length<6) team2.appendChild(slot);
+if(p.player=="1" && team1.children.length<6)team1.appendChild(card);
+if(p.player=="2" && team2.children.length<6)team2.appendChild(card);
 
 }
 
-});
+for(const route in routes){
+
+if(routes[route].length<2)continue;
+
+const r=routes[route];
+
+const box=document.createElement("div");
+box.className="route-box";
+
+box.innerHTML=`
+<div class="route-title">${route}</div>
+<div class="link">
+<div><img src="${sprite(r[0].pokemon)}"><div>${r[0].german}</div></div>
+<div class="arrow">🔗</div>
+<div><img src="${sprite(r[1].pokemon)}"><div>${r[1].german}</div></div>
+</div>
+`;
+
+routesDiv.appendChild(box);
+
+}
 
 }
 
@@ -278,15 +238,31 @@ render(currentData);
 
 });
 
-/* Pokemon Search */
+// --- Pokémon Suche (DE + EN) ---
 
 let pokemonList=[];
 
-fetch("https://pokeapi.co/api/v2/pokemon?limit=1000")
-.then(r=>r.json())
-.then(data=>{
-pokemonList=data.results.map(p=>p.name);
+async function loadPokemon(){
+
+const res=await fetch("https://pokeapi.co/api/v2/pokemon-species?limit=2000");
+const data=await res.json();
+
+for(const p of data.results){
+
+const species=await fetch(p.url).then(r=>r.json());
+
+const german=species.names.find(n=>n.language.name==="de");
+
+pokemonList.push({
+english:species.name,
+german:german?german.name:species.name
 });
+
+}
+
+}
+
+loadPokemon();
 
 const search=document.getElementById("pokemonSearch");
 const results=document.getElementById("results");
@@ -294,24 +270,24 @@ const results=document.getElementById("results");
 search.addEventListener("input",()=>{
 
 const q=search.value.toLowerCase();
-
 results.innerHTML="";
 
-if(q.length<2) return;
+if(q.length<2)return;
 
 pokemonList
-.filter(p=>p.includes(q))
+.filter(p=>p.english.includes(q)||p.german.toLowerCase().includes(q))
 .slice(0,10)
 .forEach(p=>{
 
 const div=document.createElement("div");
 div.className="search-item";
-div.textContent=p;
+div.textContent=`${p.german} (${p.english})`;
 
-div.onclick=()=>{
-search.value=p;
-results.innerHTML="";
-};
+ div.onclick=()=>{
+ search.value=p.german;
+ search.dataset.value=p.english;
+ results.innerHTML="";
+ };
 
 results.appendChild(div);
 
