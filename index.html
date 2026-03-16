@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoulLink Tracker PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+font-family:Inter, Arial;
+background:#0f172a;
+color:white;
+margin:0;
+padding:20px
+}
+
+.container{
+max-width:1200px;
+margin:auto
+}
+
+h1{
+text-align:center
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:14px;
+margin-bottom:20px
+}
+
+input,select,button{
+padding:10px;
+margin:6px;
+border-radius:8px;
+border:none;
+font-size:14px
+}
+
+button{
+background:#22c55e;
+color:white;
+font-weight:600;
+cursor:pointer
+}
+
+button.danger{
+background:#ef4444
+}
+
+table{
+width:100%;
+border-collapse:collapse
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #334155
+}
+
+.dead{
+opacity:0.4;
+text-decoration:line-through
+}
+
+.sprite{
+width:42px;
+height:42px
+}
+
+.team{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:10px
+}
+
+.team-slot{
+background:#020617;
+padding:10px;
+border-radius:10px;
+text-align:center
+}
+
+.team-slot img{
+width:70px
+}
+
+.search-results{
+background:#020617;
+border-radius:8px;
+max-height:150px;
+overflow:auto;
+position:absolute;
+z-index:10;
+width:200px
+}
+
+.search-item{
+padding:6px;
+cursor:pointer
+}
+
+.search-item:hover{
+background:#1e293b
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔥 SoulLink Tracker PRO</h1>
+
+<div class="card">
+<h3>Spieler Namen</h3>
+<input id="player1" placeholder="Spieler 1">
+<input id="player2" placeholder="Spieler 2">
+</div>
+
+<div class="card">
+<h3>Pokémon hinzufügen</h3>
+
+<input id="route" placeholder="Route">
+
+<div style="position:relative;display:inline-block;">
+<input id="pokemonSearch" placeholder="Pokémon suchen">
+<div id="results" class="search-results"></div>
+</div>
+
+<select id="player">
+<option value="1">Spieler 1</option>
+<option value="2">Spieler 2</option>
+</select>
+
+<input id="level" type="number" placeholder="Level">
+
+<button onclick="addPokemon()">Speichern</button>
+
+</div>
+
+<div class="card">
+<h3>Team Übersicht</h3>
+
+<h4>Spieler 1</h4>
+<div class="team" id="team1"></div>
+
+<h4>Spieler 2</h4>
+<div class="team" id="team2"></div>
+
+</div>
+
+<div class="card">
+<h3>Alle Pokémon</h3>
+
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Sprite</th>
+<th>Pokémon</th>
+<th>Spieler</th>
+<th>Level</th>
+<th>Status</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "YOUR_KEY",
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+projectId: "YOUR_PROJECT",
+storageBucket: "YOUR_PROJECT.appspot.com",
+messagingSenderId: "123",
+appId: "123"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const pokemonRef = collection(db,"pokemon");
+
+function sprite(name){
+return `https://img.pokemondb.net/sprites/home/normal/${name}.png`;
+}
+
+async function addPokemon(){
+
+const route=document.getElementById("route").value;
+const pokemon=document.getElementById("pokemonSearch").value.toLowerCase();
+const player=document.getElementById("player").value;
+const level=document.getElementById("level").value;
+
+if(!pokemon) return;
+
+await addDoc(pokemonRef,{route,pokemon,player,level,status:"alive"});
+
+document.getElementById("pokemonSearch").value="";
+}
+
+function render(data){
+
+const table=document.getElementById("table");
+const team1=document.getElementById("team1");
+const team2=document.getElementById("team2");
+
+team1.innerHTML="";
+team2.innerHTML="";
+table.innerHTML="";
+
+data.forEach(p=>{
+
+const tr=document.createElement("tr");
+
+if(p.status==="dead") tr.classList.add("dead");
+
+tr.innerHTML=`
+<td>${p.route}</td>
+<td><img class="sprite" src="${sprite(p.pokemon)}"></td>
+<td>${p.pokemon}</td>
+<td>${p.player}</td>
+<td>${p.level}</td>
+<td>${p.status}</td>
+<td><button onclick="kill('${p.id}','${p.route}')" class="danger">Tot</button></td>
+`;
+
+table.appendChild(tr);
+
+if(p.status==="alive"){
+
+const slot=document.createElement("div");
+slot.className="team-slot";
+slot.innerHTML=`<img src="${sprite(p.pokemon)}"><br>${p.pokemon}`;
+
+if(p.player=="1" && team1.children.length<6) team1.appendChild(slot);
+if(p.player=="2" && team2.children.length<6) team2.appendChild(slot);
+
+}
+
+});
+
+}
+
+window.kill=async function(id,route){
+
+const snapshot=currentData.filter(p=>p.route===route);
+
+for(const p of snapshot){
+
+const ref=doc(db,"pokemon",p.id);
+await updateDoc(ref,{status:"dead"});
+
+}
+
+}
+
+let currentData=[];
+
+onSnapshot(pokemonRef,(snap)=>{
+
+currentData=snap.docs.map(d=>({id:d.id,...d.data()}));
+render(currentData);
+
+});
+
+/* Pokemon Search */
+
+let pokemonList=[];
+
+fetch("https://pokeapi.co/api/v2/pokemon?limit=1000")
+.then(r=>r.json())
+.then(data=>{
+pokemonList=data.results.map(p=>p.name);
+});
+
+const search=document.getElementById("pokemonSearch");
+const results=document.getElementById("results");
+
+search.addEventListener("input",()=>{
+
+const q=search.value.toLowerCase();
+
+results.innerHTML="";
+
+if(q.length<2) return;
+
+pokemonList
+.filter(p=>p.includes(q))
+.slice(0,10)
+.forEach(p=>{
+
+const div=document.createElement("div");
+div.className="search-item";
+div.textContent=p;
+
+div.onclick=()=>{
+search.value=p;
+results.innerHTML="";
+};
+
+results.appendChild(div);
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
